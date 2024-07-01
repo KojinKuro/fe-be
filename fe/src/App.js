@@ -1,30 +1,21 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { getMessages } from "./utils/apiCalls";
 
 export default function App() {
-  const [welcomeMessage, setWelcomeMessage] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    fetchMessage();
+    getMessages().then((data) => setMessages(data));
   }, []);
 
-  function fetchMessage() {
-    fetch("http://localhost:3001/api/v1/welcome")
-      // this
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        setWelcomeMessage(json.data.attributes.body);
-      })
-      // hopefully not this
-      .catch((error) => {
-        console.log(error);
-        setWelcomeMessage(
-          "ERROR: Could not load welcome message. Check DevTools Console for additional information, and make sure the BE is running on localhost:3001."
-        );
-      });
-  }
+  const messageElements = messages.map((message) => {
+    return <li key={message.id}>{message.text}</li>;
+  });
 
-  return <h1>{welcomeMessage}</h1>;
+  return (
+    <div>
+      <ul>{messageElements}</ul>
+    </div>
+  );
 }
